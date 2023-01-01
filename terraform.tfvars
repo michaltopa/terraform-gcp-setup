@@ -1,2 +1,3 @@
-gcp_region     = ""
-default_region = ""
+gcp_region  = ""
+kms_region  = ""
+gcp_project = ""

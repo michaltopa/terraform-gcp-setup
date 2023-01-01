@@ -1,8 +1,8 @@
 # Create KMS resources for sops
 resource "google_kms_key_ring" "sops" {
   project  = var.gcp_project
-  name     = "sops"
-  location = var.kms_region == "" ? var.default_region : var.kms_region
+  name     = "sops-${var.gcp_project}"
+  location = var.kms_region
 
   depends_on = [
     google_project_service.kms_api
@@ -10,7 +10,7 @@ resource "google_kms_key_ring" "sops" {
 }
 
 resource "google_kms_crypto_key" "sops" {
-  name            = "sops-${var.workspaces[terraform.workspace]}"
+  name            = "sops-${var.gcp_project}"
   key_ring        = google_kms_key_ring.sops.id
   rotation_period = "86400s"
 
@@ -37,11 +37,11 @@ resource "google_kms_crypto_key_iam_binding" "binding" {
 
 resource "google_storage_bucket" "tf_state_bucket" {
   name     = "${var.gcp_project}-${var.workspaces[terraform.workspace]}-tf-remote-state"
-  location = var.gcs_region == "" ? var.default_region : var.gcs_region
+  location = var.gcp_region
 
   public_access_prevention    = "enforced"
   uniform_bucket_level_access = true
-  force_destroy               = false
+  force_destroy               = true
 
   versioning {
     enabled = true
@@ -58,5 +58,4 @@ resource "google_storage_bucket" "tf_state_bucket" {
   depends_on = [
     google_kms_crypto_key_iam_binding.binding
   ]
-
 }

@@ -1,6 +1,12 @@
 # GCP bootstrap overview
 Prepare GCP cloud to store tf-state even more safely + sops for encrypt/decrypt variables for further store in repository.
 
+# Setup for GCP 
+```bash
+gcloud config set project PROJECT_ID
+gcloud auth application-default login
+```
+
 ## Input
 - gcp_region
 - default_region
